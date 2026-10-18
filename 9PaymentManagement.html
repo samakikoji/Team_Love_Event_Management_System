@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payments Management</title>
+    <style>
+        body{font-family:Arial;color:#D93668;background:#FFFFFF;margin:25px}
+        input,select{padding:9px;margin:5px}
+        button{background:#D93668;color:#FFFFFF;border:0;padding:9px;cursor:pointer}
+        th,td{padding:9px}
+    </style>
+</head>
+<body>
+    <h1>Payments Management</h1>
+    <a href="6AdminDashboard.html">Back to Dashboard</a>
+    <h2>Record Payment</h2>
+    <input id="client" placeholder="Client Name" required>
+    <input id="event" placeholder="Event Name" required>
+    <input id="total" type="number" min="0" placeholder="Total Price" required>
+    <input id="paid" type="number" min="0" placeholder="Amount Paid" required>
+    <select id="method">
+        <option>Cash</option><option>GCash</option><option>Bank Transfer</option>
+    </select>
+    <button onclick="recordPayment()">Record Payment</button>
+    <h2>Payment Records</h2>
+    <table border="1">
+        <thead><tr><th>Client</th><th>Event</th><th>Total</th><th>Paid</th><th>Balance</th><th>Method</th><th>Status</th></tr></thead>
+        <tbody id="table"></tbody>
+    </table>
+    <p id="message"></p>
+    <script>
+        var payments=JSON.parse(localStorage.getItem("tle_payments")||"[]");
+        function recordPayment(){
+            var total=Number(document.getElementById("total").value);
+            var paid=Number(document.getElementById("paid").value);
+            if(!document.getElementById("client").value||!document.getElementById("event").value||
+               document.getElementById("total").value===""||document.getElementById("paid").value===""||
+               total<0||paid<0||paid>total){
+                alert("Check the payment details. Amount paid cannot be greater than the total.");return;
+            }
+            var item={
+                client:document.getElementById("client").value,
+                event:document.getElementById("event").value,
+                total:total,paid:paid,balance:total-paid,
+                method:document.getElementById("method").value,
+                status:paid===0?"Unpaid":paid<total?"Partial":"Paid"
+            };
+            payments.push(item);
+            localStorage.setItem("tle_payments",JSON.stringify(payments));
+            document.getElementById("message").innerHTML="Payment recorded.";
+            displayPayments();
+        }
+        function displayPayments(){
+            document.getElementById("table").innerHTML=payments.map(p=>
+                "<tr><td>"+p.client+"</td><td>"+p.event+"</td><td>₱"+p.total+
+                "</td><td>₱"+p.paid+"</td><td>₱"+p.balance+"</td><td>"+p.method+
+                "</td><td>"+p.status+"</td></tr>"
+            ).join("");
+        }
+        displayPayments();
+    </script>
+</body>
+</html>

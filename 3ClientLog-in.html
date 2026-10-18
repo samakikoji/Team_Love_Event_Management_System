@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <style>
+        body{font-family:Arial;background:#FFFFFF;color:#D93668;margin:40px}
+        input{padding:10px;margin:8px 0;width:280px}
+        button{background:#D93668;color:#FFFFFF;border:0;padding:10px 20px;margin:5px;cursor:pointer}
+        a{color:#D93668}
+    </style>
+</head>
+<body>
+    <h1>♥ Team Love Events</h1>
+    <h2>Login</h2>
+
+    <form onsubmit="login(event)">
+        <input type="email" id="email" placeholder="Email" required><br>
+        <input type="password" id="password" placeholder="Password" required><br>
+
+        <button type="submit">Login</button>
+        <button type="button" onclick="window.location.href='2ChooseRole.html'">Back</button>
+    </form>
+
+    <!-- ADDED: CREATE AN ACCOUNT -->
+    <p>
+        <button type="button"
+        onclick="window.location.href='5ClientRegistration.html'">
+            Create an Account
+        </button>
+    </p>
+
+    <!-- ADDED: FORGOT PASSWORD -->
+    <p>
+        <a href="Forgot Password.html">Forgot Password?</a>
+    </p>
+
+    <p id="message"></p>
+
+    <script>
+        var saved=localStorage.getItem("tle_accounts");
+        var accounts=saved?JSON.parse(saved):[
+            {name:"Admin",email:"admin@teamlove.com",password:"admin123",role:"Admin"}
+        ];
+
+        if(!saved)localStorage.setItem("tle_accounts",JSON.stringify(accounts));
+
+        function login(event){
+            event.preventDefault();
+
+            var email=document.getElementById("email").value.trim().toLowerCase();
+            var password=document.getElementById("password").value;
+            var role=JSON.parse(localStorage.getItem("tle_selectedRole")||'"Client"');
+
+            var user=accounts.find(a=>
+                a.email.toLowerCase()===email &&
+                a.password===password &&
+                a.role===role
+            );
+
+            if(user){
+                localStorage.setItem("tle_currentUser",JSON.stringify(user));
+                window.location.href=role==="Admin"?"6AdminDashboard.html":"14ClientDashboard.html";
+            }else{
+                document.getElementById("message").innerHTML=
+                    "Login failed. Check your details and role.";
+            }
+        }
+    </script>
+</body>
+</html>

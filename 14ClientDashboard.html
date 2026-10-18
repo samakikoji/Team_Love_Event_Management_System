@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Client Dashboard</title>
+    <style>
+        body{font-family:Arial;color:#D93668;background:#FFFFFF;margin:0}
+        nav{padding:20px;border-bottom:2px solid #D93668}
+        nav a{color:#D93668;margin:12px}
+        main{padding:30px}
+        .card{border:1px solid #D93668;padding:20px;margin:12px;display:inline-block}
+        button{background:#D93668;color:#FFFFFF;border:0;padding:10px;cursor:pointer}
+    </style>
+</head>
+<body>
+<nav>
+    <b>♥ Team Love Events</b>
+    <a href="14ClientDashboard.html">Dashboard</a>
+    <a href="event packagesss.html">Packages</a>
+    <a href="16ClientBookingForm.html">Book an Event</a>
+    <a href="17ClientBookingHistory.html">Booking History</a>
+    <a href="18ClientProfile.html">Profile</a>
+    <button onclick="logout()">Logout</button>
+</nav>
+<main>
+    <h1 id="welcome">Client Dashboard</h1>
+    <div class="card">Available Packages<h2>5</h2></div>
+    <div class="card">My Bookings<h2 id="total">0</h2></div>
+    <div class="card">Pending Bookings<h2 id="pending">0</h2></div>
+    <h2>My Upcoming Bookings</h2>
+    <table border="1" cellpadding="10">
+        <thead><tr><th>Event</th><th>Date</th><th>Status</th></tr></thead>
+        <tbody id="bookingTable"></tbody>
+    </table>
+</main>
+<script>
+    var user=JSON.parse(localStorage.getItem("tle_currentUser")||"null");
+    if(user)document.getElementById("welcome").innerHTML="Welcome, "+user.name;
+    var bookings=JSON.parse(localStorage.getItem("tle_bookings")||"[]");
+    if(user)bookings=bookings.filter(b=>b.clientEmail===user.email);
+    document.getElementById("total").innerHTML=bookings.length;
+    document.getElementById("pending").innerHTML=bookings.filter(b=>b.status==="Pending").length;
+    document.getElementById("bookingTable").innerHTML=bookings.map(b=>
+        "<tr><td>"+b.event+"</td><td>"+b.date+"</td><td>"+b.status+"</td></tr>"
+    ).join("");
+    function logout(){localStorage.removeItem("tle_currentUser");location.href="WelcomePage.html";}
+</script>
+</body>
+</html>

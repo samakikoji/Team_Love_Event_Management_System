@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Notifications</title>
+    <style>
+        body{font-family:Arial;color:#D93668;background:#FFFFFF;margin:25px}
+        button{background:#D93668;color:#FFFFFF;border:0;padding:10px;cursor:pointer}
+        .item{border:1px solid #D93668;padding:15px;margin:10px 0}
+    </style>
+</head>
+<body>
+    <h1>Notifications</h1>
+    <a href="6AdminDashboard.html">Back to Dashboard</a>
+    <div id="list"></div>
+    <p id="message"></p>
+    <script>
+        var notifications=JSON.parse(localStorage.getItem("tle_notifications")||"null");
+        if(!notifications){
+            notifications=[
+                {text:"New booking received.",type:"Booking Update",read:false},
+                {text:"Payment record updated.",type:"Payment Update",read:false},
+                {text:"Please check upcoming events.",type:"Event Reminder",read:false}
+            ];
+            localStorage.setItem("tle_notifications",JSON.stringify(notifications));
+        }
+        function displayNotifications(){
+            document.getElementById("list").innerHTML=notifications.map((n,i)=>
+                "<div class='item'><h3>"+n.type+"</h3><p>"+n.text+"</p><p>Status: "+
+                (n.read?"Read":"Unread")+"</p>"+
+                (n.read?"":"<button onclick='markRead("+i+")'>Mark as Read</button>")+
+                "</div>"
+            ).join("");
+        }
+        function markRead(i){
+            notifications[i].read=true;
+            localStorage.setItem("tle_notifications",JSON.stringify(notifications));
+            document.getElementById("message").innerHTML="Notification marked as read.";
+            displayNotifications();
+        }
+        displayNotifications();
+    </script>
+</body>
+</html>

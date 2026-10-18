@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Guest Management - Team Love Events</title>
+    <style>
+        body{font-family:Arial;background:#FFFFFF;color:#D93668;margin:25px}
+        input{padding:10px;margin:5px;border:1px solid #D93668}
+        button{background:#D93668;color:#FFFFFF;border:0;padding:10px;margin:3px;cursor:pointer}
+        table{border-collapse:collapse;width:100%;margin-top:20px}
+        th,td{border:1px solid #D93668;padding:10px;text-align:left}
+        th{background:#D93668;color:#FFFFFF}
+        h1,h2{color:#D93668}
+        a{color:#D93668}
+    </style>
+</head>
+<body>
+
+    <h1>Team Love Events</h1>
+    <h2>Guest Management</h2>
+    <a href="6AdminDashboard.html">Back to Admin Dashboard</a>
+
+    <h2>Add or Edit Guest</h2>
+
+    <input type="text" id="guestName" placeholder="Guest Name">
+    <input type="text" id="eventName" placeholder="Event Name">
+    <input type="text" id="contact" placeholder="Contact Number">
+    <input type="text" id="rsvp" placeholder="RSVP Status">
+
+    <button id="saveButton" onclick="saveGuest()">Add Guest</button>
+    <button onclick="clearForm()">Clear Form</button>
+
+    <h2>Guest List</h2>
+    <input type="text" id="search" placeholder="Search guest or event" oninput="displayGuests()">
+
+    <table>
+        <thead>
+            <tr>
+                <th>Guest Name</th>
+                <th>Event Name</th>
+                <th>Contact Number</th>
+                <th>RSVP Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="guestTable"></tbody>
+    </table>
+
+    <p id="message"></p>
+
+    <script>
+        var savedData = localStorage.getItem("tle_guests");
+
+        if(savedData === null){
+            var guests = [
+                {name:"Maria Santos",event:"Wedding",contact:"09123456789",rsvp:"Confirmed"},
+                {name:"John Reyes",event:"Birthday",contact:"09987654321",rsvp:"Pending"}
+            ];
+            localStorage.setItem("tle_guests",JSON.stringify(guests));
+        }else{
+            var guests = JSON.parse(savedData);
+        }
+
+        var editIndex = -1;
+
+        function saveGuest(){
+            var name = document.getElementById("guestName").value.trim();
+            var event = document.getElementById("eventName").value.trim();
+            var contact = document.getElementById("contact").value.trim();
+            var rsvp = document.getElementById("rsvp").value.trim();
+
+            if(!name || !event || !contact || !rsvp){
+                alert("Please complete all guest details.");
+                return;
+            }
+
+            var guest = {
+                name:name,
+                event:event,
+                contact:contact,
+                rsvp:rsvp
+            };
+
+            if(editIndex === -1){
+                guests.push(guest);
+                document.getElementById("message").innerHTML = "Guest added successfully.";
+            }else{
+                guests[editIndex] = guest;
+                document.getElementById("message").innerHTML = "Guest updated successfully.";
+            }
+
+            localStorage.setItem("tle_guests",JSON.stringify(guests));
+            clearForm();
+            displayGuests();
+        }
+
+        function displayGuests(){
+            var search = document.getElementById("search").value.toLowerCase();
+            var table = "";
+
+            for(var i=0;i<guests.length;i++){
+                var guest = guests[i];
+                var text = (guest.name+" "+guest.event).toLowerCase();
+
+                if(text.includes(search)){
+                    table += "<tr>";
+                    table += "<td>"+guest.name+"</td>";
+                    table += "<td>"+guest.event+"</td>";
+                    table += "<td>"+guest.contact+"</td>";
+                    table += "<td>"+guest.rsvp+"</td>";
+                    table += "<td>";
+                    table += "<button onclick='editGuest("+i+")'>Edit</button>";
+                    table += "<button onclick='deleteGuest("+i+")'>Delete</button>";
+                    table += "</td></tr>";
+                }
+            }
+
+            document.getElementById("guestTable").innerHTML = table;
+        }
+
+        function editGuest(index){
+            editIndex = index;
+            document.getElementById("guestName").value = guests[index].name;
+            document.getElementById("eventName").value = guests[index].event;
+            document.getElementById("contact").value = guests[index].contact;
+            document.getElementById("rsvp").value = guests[index].rsvp;
+            document.getElementById("saveButton").innerHTML = "Update Guest";
+            document.getElementById("message").innerHTML = "Editing guest: "+guests[index].name;
+        }
+
+        function deleteGuest(index){
+            if(confirm("Delete this guest?")){
+                guests.splice(index,1);
+                localStorage.setItem("tle_guests",JSON.stringify(guests));
+                document.getElementById("message").innerHTML = "Guest deleted successfully.";
+                displayGuests();
+                clearForm();
+            }
+        }
+
+        function clearForm(){
+            document.getElementById("guestName").value = "";
+            document.getElementById("eventName").value = "";
+            document.getElementById("contact").value = "";
+            document.getElementById("rsvp").value = "";
+            document.getElementById("saveButton").innerHTML = "Add Guest";
+            editIndex = -1;
+        }
+
+        displayGuests();
+    </script>
+
+</body>
+</html>

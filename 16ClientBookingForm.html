@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Client Booking Form</title>
+    <style>
+        body{font-family:Arial;color:#D93668;background:#FFFFFF;margin:30px}
+        input,select,textarea{display:block;padding:10px;margin:8px 0;width:320px}
+        button{background:#D93668;color:#FFFFFF;border:0;padding:12px;cursor:pointer}
+    </style>
+</head>
+<body>
+    <h1>Book an Event</h1>
+    <form onsubmit="createBooking(event)">
+        <input id="clientName" placeholder="Client Name" required>
+        <select id="event" required>
+            <option value="">Choose Event Type</option>
+            <option>Wedding</option><option>Birthday</option><option>Debut</option>
+            <option>Christening</option><option>Corporate Event</option>
+        </select>
+        <input id="date" type="date" required>
+        <input id="time" type="time" required>
+        <input id="venue" placeholder="Venue" required>
+        <input id="guests" type="number" min="1" placeholder="Number of Guests" required>
+        <textarea id="requests" placeholder="Special Requests"></textarea>
+        <input id="price" type="number" min="0" placeholder="Total Price (₱)" required>
+        <button type="submit">Submit Booking</button>
+        <button type="button" onclick="location.href='14ClientDashboard.html'">Back</button>
+    </form>
+    <p id="message"></p>
+    <script>
+        var user=JSON.parse(localStorage.getItem("tle_currentUser")||"null");
+        var chosen=JSON.parse(localStorage.getItem("tle_chosenEvent")||'""');
+        if(user)document.getElementById("clientName").value=user.name;
+        if(chosen)document.getElementById("event").value=chosen;
+        function createBooking(event){
+            event.preventDefault();
+            var list=JSON.parse(localStorage.getItem("tle_bookings")||"[]");
+            var booking={
+                id:Date.now(),clientName:document.getElementById("clientName").value,
+                clientEmail:user?user.email:"",event:document.getElementById("event").value,
+                date:document.getElementById("date").value,time:document.getElementById("time").value,
+                venue:document.getElementById("venue").value,guests:document.getElementById("guests").value,
+                requests:document.getElementById("requests").value,
+                price:Number(document.getElementById("price").value),
+                status:"Pending",paymentStatus:"Unpaid"
+            };
+            list.push(booking);
+            localStorage.setItem("tle_bookings",JSON.stringify(list));
+            alert("Booking submitted.");
+            location.href="17ClientBookingHistory.html";
+        }
+    </script>
+</body>
+</html>

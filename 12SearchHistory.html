@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Search History</title>
+    <style>
+        body{font-family:Arial;color:#D93668;background:#FFFFFF;margin:25px}
+        input{padding:10px;margin:10px 0}
+        th,td{padding:10px}
+    </style>
+</head>
+<body>
+
+    <!-- SCREEN 14: SEARCH HISTORY -->
+
+    <h1>Search History</h1>
+
+    <input type="text" id="search" placeholder="Search event name">
+    <button onclick="searchEvents()">Search</button>
+    <button onclick="clearHistory()">Clear History</button>
+
+    <h2>Search Results</h2>
+    <ul id="results"></ul>
+
+    <h2>Search History</h2>
+    <ul id="history"></ul>
+
+    <button onclick="location.href='6AdminDashboard.html'">Back</button>
+
+    <script>
+        let history = JSON.parse(
+            localStorage.getItem("searchHistory")
+        ) || [];
+
+        function searchEvents() {
+            let word = document.getElementById("search").value.toLowerCase();
+            let events = JSON.parse(localStorage.getItem("events")) || [];
+            let results = document.getElementById("results");
+
+            if (word === "") {
+                alert("Enter an event name.");
+                return;
+            }
+
+            history.push(word);
+            localStorage.setItem("searchHistory", JSON.stringify(history));
+
+            results.innerHTML = "";
+
+            events.forEach(function(item) {
+                if (item.name.toLowerCase().includes(word)) {
+                    let line = document.createElement("li");
+                    line.textContent = item.name;
+                    results.appendChild(line);
+                }
+            });
+
+            displayHistory();
+        }
+
+        function displayHistory() {
+            let list = document.getElementById("history");
+            list.innerHTML = "";
+
+            history.forEach(function(item) {
+                let line = document.createElement("li");
+                line.textContent = item;
+                list.appendChild(line);
+            });
+        }
+
+        function clearHistory() {
+            history = [];
+            localStorage.setItem("searchHistory", JSON.stringify(history));
+            displayHistory();
+        }
+
+        displayHistory();
+    </script>
+
+</body>
+</html>

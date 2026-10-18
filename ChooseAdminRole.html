@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Choose Role</title>
+    <style>
+        body{font-family:Arial;background:#FFFFFF;color:#D93668;text-align:center;padding:100px}
+        button{background:#D93668;color:#FFFFFF;border:0;padding:14px 30px;margin:10px;cursor:pointer}
+    </style>
+</head>
+<body>
+    <h1>♥ Team Love Events</h1>
+    <h2>Choose Your Role</h2>
+    <button onclick="chooseRole('Client')">Client</button>
+    <button onclick="chooseRole('Admin')">Admin</button>
+    <p id="message"></p>
+    <script>
+        function chooseRole(role){
+            localStorage.setItem("tle_selectedRole",JSON.stringify(role));
+            document.getElementById("message").innerHTML=role +" selected.";
+            window.location.href="4AdminLog-in.html";
+            
+        }
+    </script>
+</body>
+</html>

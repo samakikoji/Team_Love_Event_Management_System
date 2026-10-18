@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Login</title>
+    <style>
+        body{font-family:Arial;background:#FFFFFF;color:#D93668;margin:40px}
+        input{padding:10px;margin:8px 0;width:280px}
+        button{background:#D93668;color:#FFFFFF;border:0;padding:10px 20px;margin:5px;cursor:pointer}
+    </style>
+</head>
+<body>
+
+    <!-- SCREEN 4: ADMIN LOGIN -->
+
+    <h1>Admin Login</h1>
+
+    <form onsubmit="loginAdmin(); return false;">
+        <input type="email" id="email" placeholder="Admin Email" required><br><br>
+        <input type="password" id="password" placeholder="Password" required><br><br>
+        <input type="submit" value="Log In">
+    </form>
+
+    <button onclick="location.href='2ChooseRole.html'">Back</button>
+
+    <p id="message"></p>
+
+    <script>
+        function loginAdmin() {
+            let email = document.getElementById("email").value;
+            let password = document.getElementById("password").value;
+
+            if (email === "billonessamaki@teamlove.com" &&
+                password === "admin123") {
+                location.href = "6AdminDashboard.html";
+            } else {
+                document.getElementById("message").textContent =
+                    "Incorrect email or password.";
+            }
+            if (email === "molerarondave@teamlove.com" &&
+                password === "admin123") {
+                location.href = "6AdminDashboard.html";
+            } else {
+                document.getElementById("message").textContent =
+                    "Incorrect email or password.";
+            }
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Client Booking History</title>
+    <style>
+        body{font-family:Arial;color:#D93668;background:#FFFFFF;padding:25px}
+        input,button{padding:10px;margin:5px}
+        button{background:#D93668;color:#FFFFFF;border:0;cursor:pointer}
+        th,td{padding:10px}
+    </style>
+</head>
+<body>
+    <h1>My Booking History</h1>
+    <a href="14ClientDashboard.html">Dashboard</a>
+    <input id="search" placeholder="Search event or venue" oninput="displayBookings()">
+    <table border="1" cellpadding="8">
+        <thead><tr><th>Event</th><th>Date</th><th>Venue</th><th>Price</th><th>Booking Status</th><th>Payment</th><th>Action</th></tr></thead>
+        <tbody id="table"></tbody>
+    </table>
+    <p id="message"></p>
+    <script>
+        var user=JSON.parse(localStorage.getItem("tle_currentUser")||"null");
+        var bookings=JSON.parse(localStorage.getItem("tle_bookings")||"[]");
+        function displayBookings(){
+            bookings=JSON.parse(localStorage.getItem("tle_bookings")||"[]");
+            var q=document.getElementById("search").value.toLowerCase();
+            var rows=bookings.map((b,i)=>({b,i})).filter(x=>
+                (!user||x.b.clientEmail===user.email)&&
+                (x.b.event+" "+x.b.venue).toLowerCase().includes(q)
+            );
+            document.getElementById("table").innerHTML=rows.map(x=>
+                "<tr><td>"+x.b.event+"</td><td>"+x.b.date+"</td><td>"+x.b.venue+
+                "</td><td>₱"+x.b.price+"</td><td>"+x.b.status+"</td><td>"+x.b.paymentStatus+
+                "</td><td><button onclick='details("+x.i+")'>View Details</button> "+
+                "<button onclick='cancelBooking("+x.i+")'>Cancel Booking</button></td></tr>"
+            ).join("");
+        }
+        function details(i){alert(JSON.stringify(bookings[i],null,2));}
+        function cancelBooking(i){
+            if(confirm("Cancel this booking?")){
+                bookings[i].status="Cancelled";
+                localStorage.setItem("tle_bookings",JSON.stringify(bookings));
+                document.getElementById("message").innerHTML="Booking cancelled.";
+                displayBookings();
+            }
+        }
+        displayBookings();
+    </script>
+</body>
+</html>

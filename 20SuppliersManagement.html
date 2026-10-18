@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Suppliers Management - Team Love Events</title>
+    <style>
+        body{font-family:Arial;background:#FFFFFF;color:#D93668;margin:25px}
+        input{padding:10px;margin:5px;border:1px solid #D93668}
+        button{background:#D93668;color:#FFFFFF;border:0;padding:10px;margin:3px;cursor:pointer}
+        table{border-collapse:collapse;width:100%;margin-top:20px}
+        th,td{border:1px solid #D93668;padding:10px;text-align:left}
+        th{background:#D93668;color:#FFFFFF}
+        h1,h2{color:#D93668}
+        a{color:#D93668}
+    </style>
+</head>
+<body>
+
+    <h1>Team Love Events</h1>
+    <h2>Suppliers Management</h2>
+    <a href="6AdminDashboard.html">Back to Admin Dashboard</a>
+
+    <h2>Add or Edit Supplier</h2>
+
+    <input type="text" id="supplierName" placeholder="Supplier Name">
+    <input type="text" id="service" placeholder="Service Type">
+    <input type="text" id="contact" placeholder="Contact Number">
+    <input type="text" id="email" placeholder="Email Address">
+    <input type="number" id="price" min="0" placeholder="Service Price">
+
+    <button id="saveButton" onclick="saveSupplier()">Add Supplier</button>
+    <button onclick="clearForm()">Clear Form</button>
+
+    <h2>Supplier List</h2>
+    <input type="text" id="search" placeholder="Search supplier or service" oninput="displaySuppliers()">
+
+    <table>
+        <thead>
+            <tr>
+                <th>Supplier Name</th>
+                <th>Service Type</th>
+                <th>Contact Number</th>
+                <th>Email Address</th>
+                <th>Service Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="supplierTable"></tbody>
+    </table>
+
+    <p id="message"></p>
+
+    <script>
+        var savedData = localStorage.getItem("tle_suppliers");
+
+        if(savedData === null){
+            var suppliers = [
+                {name:"Lovely Flowers",service:"Flowers",contact:"09123456789",email:"flowers@example.com",price:5000},
+                {name:"Happy Food Catering",service:"Catering",contact:"09987654321",email:"food@example.com",price:15000}
+            ];
+
+            localStorage.setItem("tle_suppliers",JSON.stringify(suppliers));
+        }else{
+            var suppliers = JSON.parse(savedData);
+        }
+
+        var editIndex = -1;
+
+        function saveSupplier(){
+            var name = document.getElementById("supplierName").value.trim();
+            var service = document.getElementById("service").value.trim();
+            var contact = document.getElementById("contact").value.trim();
+            var email = document.getElementById("email").value.trim();
+            var priceText = document.getElementById("price").value;
+            var price = Number(priceText);
+
+            if(!name || !service || !contact || !email || priceText === "" || price < 0){
+                alert("Please complete all supplier details.");
+                return;
+            }
+
+            var supplier = {
+                name:name,
+                service:service,
+                contact:contact,
+                email:email,
+                price:price
+            };
+
+            if(editIndex === -1){
+                suppliers.push(supplier);
+                document.getElementById("message").innerHTML = "Supplier added successfully.";
+            }else{
+                suppliers[editIndex] = supplier;
+                document.getElementById("message").innerHTML = "Supplier updated successfully.";
+            }
+
+            localStorage.setItem("tle_suppliers",JSON.stringify(suppliers));
+            clearForm();
+            displaySuppliers();
+        }
+
+        function displaySuppliers(){
+            var search = document.getElementById("search").value.toLowerCase();
+            var table = "";
+
+            for(var i=0;i<suppliers.length;i++){
+                var supplier = suppliers[i];
+                var text = (supplier.name+" "+supplier.service).toLowerCase();
+
+                if(text.includes(search)){
+                    table += "<tr>";
+                    table += "<td>"+supplier.name+"</td>";
+                    table += "<td>"+supplier.service+"</td>";
+                    table += "<td>"+supplier.contact+"</td>";
+                    table += "<td>"+supplier.email+"</td>";
+                    table += "<td>₱"+supplier.price+"</td>";
+                    table += "<td>";
+                    table += "<button onclick='editSupplier("+i+")'>Edit</button>";
+                    table += "<button onclick='deleteSupplier("+i+")'>Delete</button>";
+                    table += "</td></tr>";
+                }
+            }
+
+            document.getElementById("supplierTable").innerHTML = table;
+        }
+
+        function editSupplier(index){
+            editIndex = index;
+            document.getElementById("supplierName").value = suppliers[index].name;
+            document.getElementById("service").value = suppliers[index].service;
+            document.getElementById("contact").value = suppliers[index].contact;
+            document.getElementById("email").value = suppliers[index].email;
+            document.getElementById("price").value = suppliers[index].price;
+            document.getElementById("saveButton").innerHTML = "Update Supplier";
+            document.getElementById("message").innerHTML = "Editing supplier: "+suppliers[index].name;
+        }
+
+        function deleteSupplier(index){
+            if(confirm("Delete this supplier?")){
+                suppliers.splice(index,1);
+                localStorage.setItem("tle_suppliers",JSON.stringify(suppliers));
+                document.getElementById("message").innerHTML = "Supplier deleted successfully.";
+                displaySuppliers();
+                clearForm();
+            }
+        }
+
+        function clearForm(){
+            document.getElementById("supplierName").value = "";
+            document.getElementById("service").value = "";
+            document.getElementById("contact").value = "";
+            document.getElementById("email").value = "";
+            document.getElementById("price").value = "";
+            document.getElementById("saveButton").innerHTML = "Add Supplier";
+            editIndex = -1;
+        }
+
+        displaySuppliers();
+    </script>
+
+</body>
+</html>

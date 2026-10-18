@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Client Registration</title>
+    <style>
+        body{font-family:Arial;background:#FFFFFF;color:#D93668;margin:40px}
+        input{padding:10px;margin:8px 0;width:280px}
+        button{background:#D93668;color:#FFFFFF;border:0;padding:10px 20px;margin:5px;cursor:pointer}
+    </style>
+</head>
+<body>
+    <h1>♥ Team Love Events</h1>
+    <h2>Create an Account</h2>
+
+    <form onsubmit="register(event)">
+        <input type="text" id="name" placeholder="Full Name" required><br>
+        <input type="email" id="email" placeholder="Email" required><br>
+        <input type="password" id="password" placeholder="Password" required><br>
+        <input type="password" id="confirmPassword" placeholder="Confirm Password" required><br>
+
+        <button type="submit">Create Account</button>
+        <button type="button" onclick="window.location.href='3ClientLog-in.html'">Back to Login</button>
+    </form>
+
+    <p id="message"></p>
+
+    <script>
+        function register(event){
+            event.preventDefault();
+
+            var name=document.getElementById("name").value.trim();
+            var email=document.getElementById("email").value.trim().toLowerCase();
+            var password=document.getElementById("password").value;
+            var confirmPassword=document.getElementById("confirmPassword").value;
+
+            var saved=localStorage.getItem("tle_accounts");
+            var accounts=saved?JSON.parse(saved):[
+                {name:"Admin",email:"billonessamaki@teamlove.com",password:"admin123",role:"Admin"}
+            ];
+            var accounts=saved?JSON.parse(saved):[
+                {name:"Admin",email:"molerarondave@teamlove.com",password:"admin123",role:"Admin"}
+            ];
+
+            if(password!==confirmPassword){
+                document.getElementById("message").innerHTML=
+                    "Passwords do not match.";
+                return;
+            }
+
+            var existing=accounts.find(a=>
+                a.email.toLowerCase()===email && a.role==="Client"
+            );
+
+            if(existing){
+                document.getElementById("message").innerHTML=
+                    "This client email is already registered.";
+                return;
+            }
+
+            accounts.push({
+                name:name,
+                email:email,
+                password:password,
+                role:"Client"
+            });
+
+            localStorage.setItem("tle_accounts",JSON.stringify(accounts));
+            localStorage.setItem("tle_selectedRole",JSON.stringify("Client"));
+
+            document.getElementById("message").innerHTML=
+                "Account created successfully! You can now log in.";
+
+            document.querySelector("form").reset();
+        }
+    </script>
+</body>
+</html>

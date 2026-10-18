@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Team Love Events - Event Packages</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #FCE7EE;
+            margin: 0;
+            color: #333333;
+        }
+
+        header {
+            background: #D93668;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            box-shadow: 0 3px 8px #dddddd;
+        }
+
+        h2 {
+            color: #D93668;
+        }
+
+        button {
+            background: #D93668;
+            color: white;
+            border: none;
+            padding: 12px;
+            margin: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .back {
+            background: #686868;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>♥ Team Love Events</h1>
+    <p>Choose Your Event Package</p>
+</header>
+
+<div class="container">
+    <h2>Available Packages</h2>
+
+    <div id="packageList"></div>
+
+    <button class="back" onclick="goBack()">Back to Dashboard</button>
+</div>
+
+<script>
+// JSON data for event packages
+var packages = [
+    {
+        "id": 1,
+        "name": "Wedding",
+        "price": 25000,
+        "description": "Package for a special wedding celebration."
+    },
+    {
+        "id": 2,
+        "name": "Birthday",
+        "price": 15000,
+        "description": "Package for a fun birthday celebration."
+    },
+    {
+        "id": 3,
+        "name": "Debut",
+        "price": 20000,
+        "description": "Package for an 18th birthday celebration."
+    },
+    {
+        "id": 4,
+        "name": "Christening",
+        "price": 12000,
+        "description": "Package for a special christening."
+    }
+];
+
+// Display the packages
+function displayPackages() {
+    var output = "";
+
+    packages.forEach(function(item) {
+        output += `
+            <div class="card">
+                <h2>${item.name}</h2>
+                <p>${item.description}</p>
+                <p>Starting Price: ₱${item.price.toLocaleString()}</p>
+                <button onclick="selectPackage(${item.id})">
+                    Book ${item.name}
+                </button>
+            </div>
+        `;
+    });
+
+    document.getElementById("packageList").innerHTML = output;
+}
+
+// Save the selected package as JSON
+function selectPackage(id) {
+    var selected = packages.find(function(item) {
+        return item.id === id;
+    });
+
+    localStorage.setItem("tle_selectedPackage", JSON.stringify(selected));
+    window.location.href = "8BookingManagement.html";
+}
+
+function goBack() {
+    window.location.href = "14ClientDashboard.html";
+}
+
+displayPackages();
+</script>
+
+</body>
+</html>

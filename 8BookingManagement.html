@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bookings Management</title>
+    <style>
+        body{font-family:Arial;color:#D93668;background:#FFFFFF;margin:25px}
+        input,select{padding:9px;margin:5px}
+        button{background:#D93668;color:#FFFFFF;border:0;padding:9px;margin:3px;cursor:pointer}
+        th,td{padding:9px}
+    </style>
+</head>
+<body>
+    <h1>Bookings Management</h1>
+    <a href="6AdminDashboard.html">Back to Dashboard</a>
+    <h2>Add Booking</h2>
+    <input id="client" placeholder="Client Name">
+    <input id="email" type="email" placeholder="Client Email">
+    <input id="event" placeholder="Event Name">
+    <input id="date" type="date">
+    <input id="venue" placeholder="Venue">
+    <input id="price" type="number" placeholder="Price">
+    <button onclick="saveBooking()">Add Booking</button>
+    <button onclick="clearForm()">Clear Form</button>
+    <p><input id="search" placeholder="Search bookings" oninput="displayBookings()"></p>
+    <table border="1">
+        <thead><tr><th>Client</th><th>Event</th><th>Date</th><th>Venue</th><th>Price</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="table"></tbody>
+    </table>
+    <p id="message"></p>
+    <script>
+        var bookings=JSON.parse(localStorage.getItem("tle_bookings")||"[]");
+        var editIndex=-1;
+        function saveBooking(){
+            var item={
+                id:editIndex===-1?Date.now():bookings[editIndex].id,
+                clientName:document.getElementById("client").value,
+                clientEmail:document.getElementById("email").value,
+                event:document.getElementById("event").value,
+                date:document.getElementById("date").value,
+                venue:document.getElementById("venue").value,
+                price:Number(document.getElementById("price").value),
+                status:editIndex===-1?"Pending":bookings[editIndex].status,
+                paymentStatus:editIndex===-1?"Unpaid":bookings[editIndex].paymentStatus
+            };
+            if(!item.clientName||!item.event||!item.date||!item.venue||
+               document.getElementById("price").value===""){
+                alert("Complete the booking details.");return;
+            }
+            if(editIndex===-1)bookings.push(item);else bookings[editIndex]=item;
+            localStorage.setItem("tle_bookings",JSON.stringify(bookings));
+            document.getElementById("message").innerHTML="Booking saved.";
+            clearForm();displayBookings();
+        }
+        function displayBookings(){
+            bookings=JSON.parse(localStorage.getItem("tle_bookings")||"[]");
+            var q=document.getElementById("search").value.toLowerCase();
+            document.getElementById("table").innerHTML=bookings.map((b,i)=>({b,i})).filter(x=>
+                (x.b.clientName+" "+x.b.event+" "+x.b.venue).toLowerCase().includes(q)
+            ).map(x=>"<tr><td>"+x.b.clientName+"</td><td>"+x.b.event+"</td><td>"+x.b.date+
+                "</td><td>"+x.b.venue+"</td><td>₱"+x.b.price+"</td><td>"+x.b.status+
+                "</td><td><button onclick='editBooking("+x.i+")'>Edit</button>"+
+                "<button onclick='setStatus("+x.i+",\"Confirmed\")'>Confirm</button>"+
+                "<button onclick='setStatus("+x.i+",\"Cancelled\")'>Cancel</button></td></tr>").join("");
+        }
+        function editBooking(i){
+            editIndex=i;var b=bookings[i];
+            document.getElementById("client").value=b.clientName;
+            document.getElementById("email").value=b.clientEmail;
+            document.getElementById("event").value=b.event;
+            document.getElementById("date").value=b.date;
+            document.getElementById("venue").value=b.venue;
+            document.getElementById("price").value=b.price;
+        }
+        function setStatus(i,status){
+            bookings[i].status=status;
+            localStorage.setItem("tle_bookings",JSON.stringify(bookings));displayBookings();
+        }
+        function clearForm(){
+            ["client","email","event","date","venue","price"].forEach(id=>document.getElementById(id).value="");
+            editIndex=-1;
+        }
+        displayBookings();
+    </script>
+</body>
+</html>

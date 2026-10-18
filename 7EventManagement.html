@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Events Management</title>
+    <style>
+        body{font-family:Arial;color:#D93668;background:#FFFFFF;margin:25px}
+        input{padding:9px;margin:5px}
+        button{background:#D93668;color:#FFFFFF;border:0;padding:9px;margin:3px;cursor:pointer}
+        th,td{padding:9px}
+    </style>
+</head>
+<body>
+    <h1>Events Management</h1>
+    <a href="6AdminDashboard.html">Back to Dashboard</a>
+    <h2>Add or Edit Event</h2>
+    <input id="name" placeholder="Event Name">
+    <input id="price" type="number" placeholder="Price">
+    <input id="details" placeholder="Event Details">
+    <button id="save" onclick="saveEvent()">Add Event</button>
+    <button onclick="clearForm()">Clear Form</button>
+    <p><input id="search" placeholder="Search events" oninput="displayEvents()"></p>
+    <table border="1">
+        <thead><tr><th>Name</th><th>Price</th><th>Details</th><th>Actions</th></tr></thead>
+        <tbody id="table"></tbody>
+    </table>
+    <p id="message"></p>
+    <script>
+        var events=JSON.parse(localStorage.getItem("tle_events")||"null")||[
+            {name:"Wedding",price:25000,details:"Wedding package"},
+            {name:"Birthday",price:15000,details:"Birthday package"},
+            {name:"Debut",price:20000,details:"Debut package"},
+            {name:"Christening",price:12000,details:"Christening package"},
+            {name:"Corporate Event",price:30000,details:"Business package"}
+        ];
+        localStorage.setItem("tle_events",JSON.stringify(events));
+        var editIndex=-1;
+        function saveEvent(){
+            var name=document.getElementById("name").value.trim();
+            var price=Number(document.getElementById("price").value);
+            var details=document.getElementById("details").value.trim();
+            if(!name||!details||price<0||document.getElementById("price").value===""){
+                alert("Complete all event details.");return;
+            }
+            var item={name:name,price:price,details:details};
+            if(editIndex===-1)events.push(item);else events[editIndex]=item;
+            localStorage.setItem("tle_events",JSON.stringify(events));
+            document.getElementById("message").innerHTML="Event saved.";
+            clearForm();displayEvents();
+        }
+        function displayEvents(){
+            var q=document.getElementById("search").value.toLowerCase();
+            document.getElementById("table").innerHTML=events.map((e,i)=>({e,i})).filter(x=>
+                (x.e.name+" "+x.e.details).toLowerCase().includes(q)
+            ).map(x=>"<tr><td>"+x.e.name+"</td><td>₱"+x.e.price+"</td><td>"+x.e.details+
+                "</td><td><button onclick='editEvent("+x.i+")'>Edit</button>"+
+                "<button onclick='deleteEvent("+x.i+")'>Delete</button></td></tr>").join("");
+        }
+        function editEvent(i){
+            editIndex=i;name.value=events[i].name;price.value=events[i].price;
+            details.value=events[i].details;save.value="Update Event";
+            document.getElementById("save").innerHTML="Update Event";
+        }
+        function deleteEvent(i){
+            if(confirm("Delete this event?")){
+                events.splice(i,1);localStorage.setItem("tle_events",JSON.stringify(events));displayEvents();
+            }
+        }
+        function clearForm(){
+            name.value="";price.value="";details.value="";editIndex=-1;
+            document.getElementById("save").innerHTML="Add Event";
+        }
+        displayEvents();
+    </script>
+</body>
+</html>
