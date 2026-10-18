@@ -48,7 +48,7 @@
     document.getElementById("recent").innerHTML=bookings.slice(-5).reverse().map(b=>
         "<tr><td>"+b.clientName+"</td><td>"+b.event+"</td><td>"+b.date+"</td><td>"+b.status+"</td></tr>"
     ).join("");
-    function logout(){localStorage.removeItem("tle_currentUser");location.href="WelcomePage.html";}
+    function logout(){localStorage.removeItem("tle_currentUser");location.href="index.html";}
 </script>
 </body>
 </html>
